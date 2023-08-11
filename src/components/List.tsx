@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { ListPage } from "./List/ListPage";
 import { PersonCPF } from "./List/PersonCPF";
 import { GeneratorButton } from "./GeneratorButton";
-import { GenerateAllButton } from "./GenerateAllButton";
 import { DataEmissao } from "./List/DataEmissao";
 import { NomeCompleto } from "./List/NomeCompleto";
 
@@ -46,7 +45,7 @@ const List = (props: ListProps) => {
               projectCount={people.length ?? 0}
             />
             <GeneratorButton selectedPerson={selectedPerson} />
-            <GenerateAllButton people={people} />
+            
           </>
         ) : (
           <>
