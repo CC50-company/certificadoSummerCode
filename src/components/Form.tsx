@@ -33,9 +33,6 @@ const Form = (props: FormProps) => {
 
   return (
     <form className="flex flex-col items-left py-4 w-[90%] max-w-sm mb-">
-      <h1 className="text-2xl self-center mb-6 font-bold text-primary lg:text-4xl">
-        Preencha seus dados
-      </h1>
       <label
         htmlFor="name"
         className="text-primary font-semibold text-lg md:text-xl"
