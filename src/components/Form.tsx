@@ -30,68 +30,70 @@ const Form = (props: FormProps) => {
     props.setPeople([...props.people, person]);
     setPerson({ ...initialPerson, dataEmissao: person.dataEmissao });
   };
-
+  
   return (
+    
     <form className="flex flex-col items-left py-4 w-[90%] max-w-sm mb-">
-      <label
-        htmlFor="name"
-        className="text-primary font-semibold text-lg md:text-xl"
-      >
-        Nome completo
-      </label>
-      <input
-        id="name"
-        className="appearance-none border bg-gray-100 p-2 focus:bg-white focus:outline-darkPrimary mb-4 md:text-xl"
-        placeholder="Nome completo"
-        value={person.name}
-        onChange={(e) => setPerson({ ...person, name: e.currentTarget.value })}
-      />
-      <label
-        htmlFor="cpf"
-        className="text-primary font-semibold text-lg md:text-xl"
-      >
-        CPF
-      </label>
-      <input
-        maxLength={14}
-        id="cpf"
-        className="mb-4 flex appearance-none border bg-gray-100 p-2 md:text-xl focus:bg-white focus:outline-darkPrimary"
-        placeholder="Ex.: 123.456.789-10"
-        value={person.cpf}
-        onChange={(e) =>
-          setPerson({ ...person, cpf: cpfMask(e.currentTarget.value) })
-        }
-      />
-      <label
-        htmlFor="dataEmissao"
-        className="text-primary font-semibold text-lg md:text-xl"
-      >
-        Data de emissão
-      </label>
-      <input
-        id="dataEmissao"
-        type="date"
-        value={data()}
-        onChange={(e) => {
-          const dateInput = e.currentTarget.value; // yyyy-mm-dd string format from date input
-          let dateParts = dateInput.split("-").map(Number); // split date values
-          dateParts[1]--; // fix the current month to use as index of month in Date constructor
-          setPerson({
-            ...person,
-            dataEmissao: new Date(dateParts[0], dateParts[1], dateParts[2]),
-          });
-        }}
-        className="mb-4 flex appearance-none border bg-gray-100 p-2 md:text-xl focus:bg-white focus:outline-darkPrimary"
-      />
-      <button
-        type="button"
-        onClick={addPerson}
-        disabled={!person?.name || !person?.cpf || !person?.dataEmissao}
-        className="px-16 text-white bg-primary font-bold py-2  md:text-xl disabled:opacity-75 md:py-4"
-      >
-        Clique para Emitir
-      </button>
-    </form>
+    <h1 className="centered-text text-white font-semibold text-lg md:text-xl bg-center">Preencha seus Dados e pegue o seu certificado!</h1>
+  <label
+      htmlFor="name"
+      className="text-white font-semibold text-lg md:text-xl "  style={{ marginTop: '20px'}}
+    >
+      Nome completo
+    </label>
+    <input
+      id="name"
+      className="mb-4 flex appearance-none p-2 md:text-md bg-[#303030] rounded-full" 
+      value={person.name}
+      onChange={(e) => setPerson({ ...person, name: e.currentTarget.value })}
+    />
+    <label
+      htmlFor="cpf"
+      className="text-white font-semibold text-lg md:text-xl"
+    >
+      CPF
+    </label>
+    <input
+      maxLength={14}
+      id="cpf"
+      className="mb-4 flex appearance-none p-2 md:text-md bg-[#303030] rounded-full"
+      placeholder="Ex.: 123.456.789-10"
+      value={person.cpf}
+      onChange={(e) =>
+        setPerson({ ...person, cpf: cpfMask(e.currentTarget.value) })
+      }
+    />
+    <label
+      htmlFor="dataEmissao"
+      className="text-white font-semibold text-lg md:text-xl"
+    >
+      Data de emissão
+    </label>
+    <input
+      id="dataEmissao"
+      type="date"
+      value={data()}
+      onChange={(e) => {
+        const dateInput = e.currentTarget.value; // yyyy-mm-dd string format from date input
+        let dateParts = dateInput.split("-").map(Number); // split date values
+        dateParts[1]--; // fix the current month to use as index of month in Date constructor
+        setPerson({
+          ...person,
+          dataEmissao: new Date(dateParts[0], dateParts[1], dateParts[2]),
+        });
+      }}
+      className="mb-4 flex appearance-none p-2 md:text-md bg-[#303030] rounded-full"
+    />
+    <button
+      type="button"
+      onClick={addPerson}
+      disabled={!person?.name || !person?.cpf || !person?.dataEmissao}
+      className="px-16 text-white bg-primary font-bold py-2 md:text-xl disabled:opacity-75 md:py-4 rounded-lg"
+    >
+      Clique para Emitir
+    </button>
+  </form>
+  
   );
 };
 

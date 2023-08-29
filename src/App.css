@@ -6,3 +6,10 @@ body {
     color: white; /* Define a cor do texto para contraste */
   }
   
+  .bg-black{
+    color: #303030;
+  }
+
+  .centered-text {
+    text-align: center;
+  }
