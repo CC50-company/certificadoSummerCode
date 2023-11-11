@@ -73,7 +73,7 @@ export const generateCertificate = async (person: Person) => {
   pdf.setTitle(pdfTitle);
   pdf.setLanguage("pt-br");
   pdf.setAuthor("Fundação Estudar");
-  pdf.setCreator("Summer Code 2023.2");
+  pdf.setCreator("CC50 Certificados");
   pdf.setProducer("FE");
   pdf.setKeywords(["Ciência", "Tecnologia", "Certificado", "Prêmio"]);
   pdf.setSubject("Certificado");
