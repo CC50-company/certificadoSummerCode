@@ -1,5 +1,5 @@
 interface Person {
   name: string;
-  cpf: string;
+  email: string;
   dataEmissao: Date;
 }
