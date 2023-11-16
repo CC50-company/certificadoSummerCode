@@ -1,4 +1,4 @@
-import { generateCertificate } from "../utils/GenerateCertificate";
+import { generateCertificate } from "../services/GenerateCertificate";
 
 interface GenerateAllButtonProps {
   people: Person[];
