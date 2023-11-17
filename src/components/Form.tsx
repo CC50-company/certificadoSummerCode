@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { cpfMask } from "../utils/CPFMask";
 
 interface FormProps {
   setPeople: React.Dispatch<React.SetStateAction<Person[]>>;
@@ -8,7 +7,7 @@ interface FormProps {
 
 const initialPerson: Person = {
   name: "",
-  cpf: "",
+  email: "",
   dataEmissao: new Date(),
 };
 
@@ -48,19 +47,18 @@ const Form = (props: FormProps) => {
       onChange={(e) => setPerson({ ...person, name: e.currentTarget.value })}
     />
     <label
-      htmlFor="cpf"
+      htmlFor="email"
       className="text-white font-semibold text-lg md:text-xl"
     >
-      CPF
+      Email
     </label>
     <input
-      maxLength={14}
-      id="cpf"
+      id="email"
       className="mb-4 flex appearance-none p-2 md:text-md bg-[#303030] rounded-full"
-      placeholder="Ex.: 123.456.789-10"
-      value={person.cpf}
+      placeholder="Ex.: exemplo.cc50@gmail.com"
+      value={person.email}
       onChange={(e) =>
-        setPerson({ ...person, cpf: cpfMask(e.currentTarget.value) })
+        setPerson({ ...person, email: e.currentTarget.value })
       }
     />
     <label
@@ -87,7 +85,7 @@ const Form = (props: FormProps) => {
     <button
       type="button"
       onClick={addPerson}
-      disabled={!person?.name || !person?.cpf || !person?.dataEmissao}
+      disabled={!person?.name || !person?.email || !person?.dataEmissao}
       className="px-16 text-white bg-primary font-bold py-2 md:text-xl disabled:opacity-75 md:py-4 rounded-lg"
     >
       Clique para Emitir

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ListPage } from "./List/ListPage";
-import { PersonCPF } from "./List/PersonCPF";
+import { PersonEmail } from "./List/PersonEmail";
 import { GeneratorButton } from "./GeneratorButton";
 import { DataEmissao } from "./List/DataEmissao";
 import { NomeCompleto } from "./List/NomeCompleto";
@@ -37,7 +37,7 @@ const List = (props: ListProps) => {
         {people?.length > 0 ? (
           <>
             <NomeCompleto nome={selectedPerson?.name} />
-            <PersonCPF cpf={selectedPerson?.cpf} />
+            <PersonEmail email={selectedPerson?.email} />
             <DataEmissao dataEmissao={selectedPerson?.dataEmissao} />
             <ListPage
               projectIndex={personIndex}

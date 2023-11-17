@@ -5,7 +5,7 @@ import robotoPath from "../assets/Roboto-Regular.ttf";
 import certificatePath from "../assets/certificate_template.pdf";
 
 const NAME_FONT_SIZE = 36;
-const CPF_FONT_SIZE = 18;
+const EMAIL_FONT_SIZE = 18;
 const DATE_FONT_SIZE = 15;
 const TEXT_MAX_WIDTH = 700;
 const TEXT_COLOR = rgb(0, 0.647, 0.169);
@@ -16,7 +16,7 @@ export const generateCertificate = async (person: Person) => {
   );
   const roboto = await fetch(robotoPath).then((res) => res.arrayBuffer());
 
-  const { cpf, name } = person;
+  const { email, name } = person;
 
   const dataEmissao = person?.dataEmissao?.toLocaleDateString("pt-BR", {
     day: "2-digit",
@@ -47,19 +47,24 @@ export const generateCertificate = async (person: Person) => {
     x: pdfWidth / 2 - studentBoxWidth / 2,
     color: TEXT_COLOR,
   });
-  const cpfText = cpf ? `CPF: ${cpf}` : '';
-  const titleLineHeight = font.heightAtSize(CPF_FONT_SIZE);
-  const titleLineWidth = font.widthOfTextAtSize(cpf, CPF_FONT_SIZE);
+  const emailText = email ? `Email: ${email}` : '';
+  const titleLineHeight = font.heightAtSize(EMAIL_FONT_SIZE);
+  let emailFontSize = EMAIL_FONT_SIZE + 1;
+  let titleLineWidth: number;
+  do {
+    emailFontSize -= 1;
+    titleLineWidth = font.widthOfTextAtSize(emailText, emailFontSize);
+  } while (titleLineWidth > TEXT_MAX_WIDTH);
 
-  pdfPage.drawText(cpfText, {
-    y: 303 - titleLineHeight / 2,
-    size: CPF_FONT_SIZE,
+  pdfPage.drawText(emailText, {
+    y: 310 - titleLineHeight / 2,
+    size: EMAIL_FONT_SIZE,
     font,
-    x: pdfWidth / 2 - titleLineWidth / 2 - 9,
+    x: pdfWidth / 2 - titleLineWidth / 2,
     color: TEXT_COLOR,
   });
 
-  const dateLineHeight = font.heightAtSize(CPF_FONT_SIZE);
+  const dateLineHeight = font.heightAtSize(EMAIL_FONT_SIZE);
   const dateLineWidth = font.widthOfTextAtSize(dataEmissao, DATE_FONT_SIZE);
 
   pdfPage.drawText(dataEmissao, {
