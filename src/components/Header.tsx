@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 
+// Não é necessário adicionar tipos explícitos para componentes funcionais do React em TypeScript
+// pois o TypeScript já inferirá a maior parte deles.
 const Header: React.FC = () => {
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isDropdownOpen, setDropdownOpen] = useState<boolean>(false);
 
-  const toggleDropdown = () => {
+  const toggleDropdown = (): void => {
     setDropdownOpen(!isDropdownOpen);
   };
-  
+
   return (
-    <header className="flex justify-between items-center p-4">
+    <header className="flex justify-between items-center p-4 mx-auto max-w-screen-xl">
       <div className="flex items-center">
         <a href="https://seu-link-para-o-CC50.com" target="_blank" rel="noopener noreferrer">
-          <div className="font-bold text-lg md:text-3xl lg:text-4xl xl:text-20xl" style={{ marginTop: '10px', marginLeft: '35px' }}>
+          <div className="font-bold text-lg md:text-3xl lg:text-4xl" style={{ marginTop: '10px', marginLeft: '35px' }}>
             CC50
           </div>
         </a>
@@ -21,7 +23,7 @@ const Header: React.FC = () => {
           Menu
         </button>
         {isDropdownOpen && (
-          <div className="absolute top-16 right-2 bg-white p-2">
+          <div className="absolute top-16 right-2 bg-white p-2 shadow-md z-10">
             <a href="https://seu-link-para-o-CC50.com" target="_blank" rel="noopener noreferrer">
               <p>Acessar o CC50</p>
             </a>
@@ -31,7 +33,7 @@ const Header: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="hidden md:flex space-x-4 absolute top-3 right-10">
+      <div className="hidden md:flex space-x-4">
         <a href="https://seu-link-para-o-CC50.com" target="_blank" rel="noopener noreferrer">
           <p>Acessar o CC50</p>
         </a>
