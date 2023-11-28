@@ -5,7 +5,7 @@ import { FaLinkedin } from 'react-icons/fa';
 interface Person {
   name: string;
   email: string;
-  dataEmissao: string; // Mantido como string
+  dataEmissao: Date; // Mantido como string
   // Adicione outros campos necessários
 }
 

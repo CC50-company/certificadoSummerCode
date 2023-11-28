@@ -9,7 +9,7 @@ import { NomeCompleto } from "./List/NomeCompleto";
 interface Person {
   name: string;
   email: string;
-  dataEmissao: string; // Mantido como string para consistência
+  dataEmissao: Date; // Mantido como string para consistência
 }
 
 // Props para o componente List
