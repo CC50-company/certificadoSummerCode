@@ -1,4 +1,4 @@
-import { Controller, Get, ForbiddenException, Post, Query, Param, Body, NotFoundException } from '@nestjs/common';
+import { StreamableFile, Controller, Get, ForbiddenException, Post, Query, Param, Body, NotFoundException } from '@nestjs/common';
 import { CertificateGeneratorService } from './app.service';
 import { Status } from './entities/status.enum';
 import { Person } from './entities/Person';
@@ -28,15 +28,16 @@ export class CertificateGeneratorController {
   }
 
   @Get()
-  async getCertiticateByEmail(@Query('email') email: string): Promise<Uint8Array> {
+  async getCertiticateByEmail(@Query('email') email: string): Promise<StreamableFile> {
     const student = this.appService.getStudent(email);
     if (student.status != Status.GENERATED) {
       throw new ForbiddenException();
     };
-    return await this.appService.mountCertificate(student);
+    const certificate = await this.appService.mountCertificate(student);
+    return new StreamableFile(certificate, {type: ".pdf"});
   }
-  @Get(':id')
-  async getCertiticateById(@Param('id') id: string): Promise<Uint8Array> {
+  @Get(':id.pdf')
+  async getCertiticateById(@Param('id') id: string): Promise<StreamableFile> {
     const email = this.appService.getEmailByCertificateId(id);
     if (!email) {
       throw new NotFoundException();

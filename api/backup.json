@@ -1,1 +1,6 @@
-{"string":{"status":2,"certificateId":"e1a5285d-fa3f-4789-ac9b-c9153ddfae91","person":{"email":"string","dataEmissao":"2023-11-28T00:42:44.599Z","name":"string"}}}
+{
+    "string1":{"status":1},
+    "string2":{"status":1},
+    "string3":{"status":1},
+    "string4":{"status":1}
+}
