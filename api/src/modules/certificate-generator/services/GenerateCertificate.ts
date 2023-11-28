@@ -1,31 +1,25 @@
-import fontkit from "@pdf-lib/fontkit";
+import * as fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb } from "pdf-lib";
-import { Person } from "../entities/Person";
+import * as fs from 'fs';
+import { Student } from "../entities/Student";
 
-const robotoPath = "../assets/Roboto-Regular.tff";
-const certificatePath = "../assets/certificate_template.pdf";
+const robotoPath = "src/modules/certificate-generator/assets/Roboto-Regular.ttf";
+const certificatePath = "src/modules/certificate-generator/assets/certificate_template.pdf";
 const NAME_FONT_SIZE = 36;
 const EMAIL_FONT_SIZE = 18;
+const ID_FONT_SIZE = 18;
 const DATE_FONT_SIZE = 15;
 const TEXT_MAX_WIDTH = 700;
 const TEXT_COLOR = rgb(0, 0.647, 0.169);
 
-export async function generateCertificate(person: Person): Promise<Uint8Array> {
-  const certificateTemplate = await fetch(certificatePath).then((res) =>
-    res.arrayBuffer()
-  );
-  const roboto = await fetch(robotoPath).then((res) => res.arrayBuffer());
+export async function createCertificate(student: Student): Promise<Uint8Array> {
+  const roboto = fs.readFileSync(robotoPath);
+  const certificateTemplate = fs.readFileSync(certificatePath);
 
-  const { email, name } = person;
-
-  const dataEmissao = person?.dataEmissao?.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    year: "numeric",
-    month: "long",
-  });
+  const { email, name, dataEmissao } = student.person;
+  const certificateId = student.certificateId;
 
   const pdf = await PDFDocument.load(certificateTemplate);
-
   pdf.registerFontkit(fontkit);
   const font = await pdf.embedFont(roboto);
 
@@ -72,6 +66,16 @@ export async function generateCertificate(person: Person): Promise<Uint8Array> {
     size: DATE_FONT_SIZE,
     font,
     x: pdfWidth - dateLineWidth - 350,
+  });
+
+  const idLineHeight = font.heightAtSize(EMAIL_FONT_SIZE);
+  const idLineWidth = font.widthOfTextAtSize(dataEmissao, ID_FONT_SIZE);
+
+  pdfPage.drawText(dataEmissao, {
+    y: -100 - idLineHeight / 2,
+    size: ID_FONT_SIZE,
+    font,
+    x: pdfWidth - idLineWidth - 350,
   });
 
   const pdfTitle = ["Certificado", name].join(" - ");

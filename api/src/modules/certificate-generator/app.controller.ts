@@ -1,36 +1,47 @@
-import { Controller, Get, ForbiddenException, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, ForbiddenException, Post, Query, Param, Body, NotFoundException } from '@nestjs/common';
 import { CertificateGeneratorService } from './app.service';
 import { Status } from './entities/status.enum';
 import { Person } from './entities/Person';
+import { Student } from './entities/Student';
 
 @Controller('certificate')
 export class CertificateGeneratorController {
   getCertificateStrategies: object
   constructor(private readonly appService: CertificateGeneratorService) {
     this.getCertificateStrategies = {
-      [Status.FORBIDDEN]: async (pearson: Person) => { throw ForbiddenException },
-      [Status.ALLOWED]: appService.generateCertificate,
-      [Status.GENERATED]: appService.getCertificate,
+      [Status.FORBIDDEN]: async (student: Student) => { throw new ForbiddenException },
+      [Status.ALLOWED]: appService.generateCertificate.bind(appService),
+      [Status.GENERATED]: async (student: Student) => student.certificateId,
     };
   }
   @Get('status')
-  checkAllowed(@Param() email: string): Status {
-    return this.appService.checkStatus(email);
+  checkAllowed(@Query('email') email: string): Status {
+    const student = this.appService.getStudent(email);
+    return student.status;
   }
   @Post()
-  async generateCertificate(@Body() person: Person): Promise<Uint8Array> {
-    const status = this.appService.checkStatus(person.email);
-    const getCertificateStrategy = this.getCertificateStrategies[status];
-    return await getCertificateStrategy(person);
+  async generateCertificate(@Body() person: Person): Promise<boolean> {
+    const student = this.appService.getStudent(person.email);
+    const getCertificateStrategy = this.getCertificateStrategies[student.status];
+    student.person = person;
+    return await getCertificateStrategy(student);
   }
+
   @Get()
-  async getCertiticate(@Param() email: string): Promise<Uint8Array> {
-    const status = this.appService.checkStatus(email);
-    if (status != Status.GENERATED) {
-      throw ForbiddenException;
+  async getCertiticateByEmail(@Query('email') email: string): Promise<Uint8Array> {
+    const student = this.appService.getStudent(email);
+    if (student.status != Status.GENERATED) {
+      throw new ForbiddenException();
     };
-    const person = this.appService.getPerson(email);
-    return await this.appService.getCertificate(person);
+    return await this.appService.mountCertificate(student);
+  }
+  @Get(':id')
+  async getCertiticateById(@Param('id') id: string): Promise<Uint8Array> {
+    const email = this.appService.getEmailByCertificateId(id);
+    if (!email) {
+      throw new NotFoundException();
+    };
+    return await this.getCertiticateByEmail(email);
   }
 
 }
