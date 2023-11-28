@@ -5,11 +5,11 @@ import { GeneratorButton } from "./GeneratorButton";
 import { DataEmissao } from "./List/DataEmissao";
 import { NomeCompleto } from "./List/NomeCompleto";
 
-// Definindo a interface Person para garantir a tipagem correta
+// Definindo a interface Person
 interface Person {
   name: string;
   email: string;
-  dataEmissao: string;
+  dataEmissao: string; // Mantido como string para consistência
 }
 
 // Props para o componente List
@@ -22,17 +22,13 @@ const List: React.FC<ListProps> = ({ people }) => {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   useEffect(() => {
-    if (people.length > 0) {
-      const lastPersonIndex = people.length - 1;
-      setPersonIndex(lastPersonIndex);
-      setSelectedPerson(people[lastPersonIndex]);
+    if (people.length > 0 && personIndex < people.length) {
+      setSelectedPerson(people[personIndex]);
+    } else {
+      setPersonIndex(0);
+      setSelectedPerson(null);
     }
-  }, [people]);
-
-  const updateSelectedPerson = (index: number) => {
-    setPersonIndex(index);
-    setSelectedPerson(people[index]);
-  };
+  }, [people, personIndex]);
 
   return (
     <div className="list-container">
@@ -41,15 +37,20 @@ const List: React.FC<ListProps> = ({ people }) => {
       </h2>
       {people.length > 0 ? (
         <div className="list-content">
-          <NomeCompleto nome={selectedPerson?.name} />
-          <PersonEmail email={selectedPerson?.email} />
-          <DataEmissao dataEmissao={selectedPerson?.dataEmissao} />
+          {selectedPerson && (
+            <>
+              <NomeCompleto nome={selectedPerson.name} />
+              <PersonEmail email={selectedPerson.email} />
+              {/* Conversão de string para Date feita aqui */}
+              <DataEmissao dataEmissao={new Date(selectedPerson.dataEmissao)} />
+            </>
+          )}
           <ListPage
             projectIndex={personIndex}
-            setProjectIndex={updateSelectedPerson}
+            setProjectIndex={setPersonIndex}
             projectCount={people.length}
           />
-          <GeneratorButton selectedPerson={selectedPerson} />
+          {selectedPerson && <GeneratorButton selectedPerson={selectedPerson} />}
         </div>
       ) : (
         <h1>Preencha todos os dados para emitir.</h1>
@@ -58,4 +59,4 @@ const List: React.FC<ListProps> = ({ people }) => {
   );
 };
 
-export { List };
+export { List, type Person };

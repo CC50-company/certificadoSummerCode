@@ -27,7 +27,7 @@ const initialPerson: Person = {
 
 const Form = (props: FormProps) => {
   const [person, setPerson] = useState<Person>(initialPerson);
-  const [validEmails, setValidEmails] = useState<EmailEntry[]>(estudantes); // Usa os dados importados
+  const [validEmails] = useState<EmailEntry[]>(estudantes); // Usa os dados importados
   const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
   
 
