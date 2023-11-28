@@ -1,31 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CertificateGeneratorRepository } from './app.repository';
-import { generateCertificate } from './services/GenerateCertificate';
+import { createCertificate } from './services/GenerateCertificate';
 import { Status } from './entities/status.enum';
 import { Person } from './entities/Person';
+import { Student } from './entities/Student';
+import {v4 as uuidv4} from 'uuid';
+
 
 @Injectable()
 export class CertificateGeneratorService {
   constructor(private readonly appRepository: CertificateGeneratorRepository) {};
 
-  checkStatus(email: string): Status {
-    const student = this.appRepository.getStudent(email);
-    return student?.status ? student.status : Status.FORBIDDEN;
+  private updateStudent(backupStudent: Student, updatedStudent:  {
+    status?: Status, person?: Person, certificateId?: string
+  }): Student {
+    backupStudent.certificateId = updatedStudent?.certificateId ? updatedStudent?.certificateId : backupStudent.certificateId;
+    backupStudent.status = updatedStudent?.status ? updatedStudent?.status : backupStudent.status;
+    backupStudent.person = {
+        email: updatedStudent?.person?.email ? updatedStudent?.person.email : backupStudent.person.email,
+        dataEmissao: updatedStudent?.person?.dataEmissao ? updatedStudent?.person.dataEmissao : backupStudent.person.dataEmissao,
+        name: updatedStudent?.person?.name ? updatedStudent?.person.name : backupStudent.person.name,
+    };
+    return backupStudent
   }
-  changeStatus(email: string, status: Status): boolean {
-    const student = this.appRepository.getStudent(email);
-    student.status = status;
-    return this.appRepository.upsertStudent(student);
+  changeStudent(email: string, student: {status?: Status, person?: Person, certificateId?: string}): boolean {
+    const backupStudent = this.appRepository.getStudent(email);
+    const updatedStudent = this.updateStudent(backupStudent, student)
+    return this.appRepository.upsertStudent(updatedStudent);
   }
-  getPerson(email: string): Person {
-    return this.appRepository.getStudent(email).person;
+  getStudent(email: string): Student {
+    return this.appRepository.getStudent(email);
   }
-  async generateCertificate(person: Person): Promise<Uint8Array> {
-    const certificate = this.getCertificate(person);
-    this.changeStatus(person.email, Status.GENERATED);
-    return certificate;
+  getEmailByCertificateId(id: string): string {
+    return this.appRepository.findEmailById(id);
   }
-  async getCertificate(person: Person): Promise<Uint8Array> {
-    return generateCertificate(person);
+  async generateCertificate(student: Student): Promise<string> {
+    student.certificateId = uuidv4();
+    student.status = Status.GENERATED;
+    try {
+      await this.mountCertificate(student);
+    } catch (error) {
+      console.log(error)
+      throw new InternalServerErrorException()
+    }
+    this.changeStudent(student.person.email, student);
+    this.appRepository.setEmailId(student.person.email, student.certificateId)
+    return student.certificateId;
+  }
+  async mountCertificate(student: Student): Promise<Uint8Array> {
+    return createCertificate(student);
   }
 }
