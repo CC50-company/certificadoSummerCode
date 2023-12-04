@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CertificateGeneratorRepository } from './app.repository';
 import { createCertificate } from './services/GenerateCertificate';
-import { Status } from './entities/status.enum';
+import { PersonStatus } from './entities/status.enum';
 import { Person } from './entities/Person';
 import { Student } from './entities/Student';
 import {v4 as uuidv4} from 'uuid';
@@ -12,7 +12,7 @@ export class CertificateGeneratorService {
   constructor(private readonly appRepository: CertificateGeneratorRepository) {};
 
   private updateStudent(backupStudent: Student, updatedStudent:  {
-    status?: Status, person?: Person, certificateId?: string
+    status?: PersonStatus, person?: Person, certificateId?: string
   }): Student {
     backupStudent.certificateId = updatedStudent?.certificateId ? updatedStudent?.certificateId : backupStudent.certificateId;
     backupStudent.status = updatedStudent?.status ? updatedStudent?.status : backupStudent.status;
@@ -23,7 +23,7 @@ export class CertificateGeneratorService {
     };
     return backupStudent
   }
-  changeStudent(email: string, student: {status?: Status, person?: Person, certificateId?: string}): boolean {
+  changeStudent(email: string, student: {status?: PersonStatus, person?: Person, certificateId?: string}): boolean {
     const backupStudent = this.appRepository.getStudent(email);
     const updatedStudent = this.updateStudent(backupStudent, student)
     return this.appRepository.upsertStudent(updatedStudent);
@@ -36,7 +36,7 @@ export class CertificateGeneratorService {
   }
   async generateCertificate(student: Student): Promise<string> {
     student.certificateId = uuidv4();
-    student.status = Status.GENERATED;
+    student.status = PersonStatus.GENERATED;
     try {
       await this.mountCertificate(student);
     } catch (error) {

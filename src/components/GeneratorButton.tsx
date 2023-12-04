@@ -1,5 +1,5 @@
 
-import { generateCertificate, checkPersonStatus } from "../services/GenerateCertificate";
+import { generateCertificate } from "../services/GenerateCertificate";
 import { FaLinkedin } from 'react-icons/fa';
 
 interface Person {
@@ -20,24 +20,12 @@ export const GeneratorButton = ({ selectedPerson }: GeneratorButtonProps) => {
         ...selectedPerson,
         dataEmissao: new Date(selectedPerson.dataEmissao)
       };
-      const personStatus = await checkPersonStatus(personWithDate);
-      if (!personStatus.isAllowed){
-        // TODO
-        return
-      }
-
       const certificateUrl: string = await generateCertificate(personWithDate);
       if (!certificateUrl){
+        window.alert("Erro ao gerar o certificado! Por favor, tente novamente ou entre em contato com o professor!")
         return
-        // TODO
       }
-
-      const newWindow = window.open(certificateUrl, '_blank')
-      if (personStatus.isRegistered){
-        window.alert("Certificado já existia!")
-      } else {
-        newWindow?.focus()
-      }
+      window.open(certificateUrl, '_blank')?.focus()
       
     } else {
       console.error("Nenhuma pessoa selecionada");

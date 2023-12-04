@@ -6,10 +6,10 @@ import react from "@vitejs/plugin-react";
 export default defineConfig({
   plugins: [
     react(),
-    // run([{
-    //     name: 'API startup',
-    //     run: ['ts-node', '.\\api\\src\\main.ts'],
-    //   }])
+    run([{
+        name: 'API startup',
+        run: ['ts-node', '.\\api\\src\\main.ts'],
+      }])
   ],
   base: "/",
 });

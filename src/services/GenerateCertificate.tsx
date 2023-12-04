@@ -1,23 +1,23 @@
 import axios, { AxiosResponse } from 'axios';
+import { PersonStatus } from '../../api/src/modules/certificate-generator/entities/status.enum'
 
 const apiUrlBase = 'http://localhost:3000/certificate';
 const apiUrlGenerateCertificate = apiUrlBase;
 const apiUrlCheckStatus = apiUrlBase + '/status';
-const apiUrlGetCertificateByEmail = apiUrlBase;
+const apiUrlGetCertificateIdByEmail = apiUrlBase + "/id";
 const apiUrlGetCertificateById = apiUrlBase;
-
-interface PersonStatus {
-  isAllowed: boolean;
-  isRegistered: boolean;
-}
 
 
 function mountCertificatePath(certificateId: string): string {
     return apiUrlGetCertificateById + "/" + certificateId + ".pdf";
 }
 
-function mountStatusPath(person: Person): string {
-  return apiUrlCheckStatus + "?email=" + person.email;
+function mountStatusUrl(email: string): string {
+  return apiUrlCheckStatus + "?email=" + email;
+}
+
+function mountGetCertificateUrl(email: string): string {
+  return apiUrlGetCertificateIdByEmail + "?email=" + email;
 }
 
 
@@ -37,17 +37,25 @@ export async function generateCertificate(person: Person): Promise<string> {
   return certificatePath;
 };
 
-export async function checkPersonStatus(person: Person): Promise<PersonStatus> {
-  let personStatus: PersonStatus = {
-    isAllowed: false,
-    isRegistered: false,
-  };
+export async function getCertificate(email: string): Promise<string> {
+  let certificatePath: string = '';
   try {
-    const response: AxiosResponse<number> = await axios.get(mountStatusPath(person));
-    const personStatusEnum = response.data;
-    console.log('API Response:', personStatusEnum);
-    personStatus.isAllowed = !(personStatusEnum == 0);
-    personStatus.isRegistered = (personStatusEnum == 2);
+    const response: AxiosResponse<string> = await axios.get(mountGetCertificateUrl(email));
+    const certificateId = response.data;
+    console.log('API Response:', certificateId);
+    certificatePath = mountCertificatePath(certificateId);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+  }
+  return certificatePath;
+};
+
+export async function checkPersonStatus(email: string): Promise<PersonStatus> {
+  let personStatus: PersonStatus = PersonStatus.FORBIDDEN;
+  try {
+    const response: AxiosResponse<PersonStatus> = await axios.get(mountStatusUrl(email));
+    personStatus = response.data;
+    console.log('API Response:', personStatus);
   } catch (error) {
     console.error('Error fetching data:', error);
   }

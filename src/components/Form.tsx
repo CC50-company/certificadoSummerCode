@@ -1,5 +1,8 @@
-import { useState, useEffect } from "react";
-import estudantes from './estudantes.json'; 
+import { useState } from "react";
+import { checkPersonStatus, getCertificate } from "../services/GenerateCertificate";
+import { PersonStatus } from '../../api/src/modules/certificate-generator/entities/status.enum'
+
+
 interface Person {
   name: string;
   email: string;
@@ -11,14 +14,6 @@ interface FormProps {
   people: Person[];
 }
 
-// Interface para o formato do JSON dos emails
-interface EmailEntry {
-  pessoa: {
-    email: string;
-  };
-  status: string;
-}
-
 const initialPerson: Person = {
   name: "",
   email: "",
@@ -27,19 +22,6 @@ const initialPerson: Person = {
 
 const Form = (props: FormProps) => {
   const [person, setPerson] = useState<Person>(initialPerson);
-  const [validEmails] = useState<EmailEntry[]>(estudantes); // Usa os dados importados
-  const [isEmailValid, setIsEmailValid] = useState<boolean>(false);
-  
-
- 
-
-  useEffect(() => {
-    setIsEmailValid(
-      validEmails.some(
-        (entry) => entry.pessoa.email === person.email && entry.status === "ativo"
-      )
-    );
-  }, [person.email, validEmails]);
 
   const data = () => {
     const date = person.dataEmissao;
@@ -52,11 +34,34 @@ const Form = (props: FormProps) => {
     return stringDate;
   };
 
-  const addPerson = () => {
-    if (isEmailValid) {
-      props.setPeople([...props.people, person]);
-      setPerson({ ...initialPerson, dataEmissao: person.dataEmissao });
+  async function addUnathorizedPerson(){
+    window.alert("Email não autorizado.")
+  }
+
+  async function addRegisteredPerson(){
+    const certificateUrl = await getCertificate(person.email)
+    if (!certificateUrl){
+      window.alert("O certificado do email já foi gerado. Mas houve um erro ao gerar um link para acessá-lo. Por favor, entre em contato com o professor.")
+      return
     }
+    window.alert("O certificado do email já foi gerado. Seu link é: " + certificateUrl)
+  }
+
+  async function addAthorizedPerson(){
+    props.setPeople([...props.people, person]);
+    setPerson({ ...initialPerson, dataEmissao: person.dataEmissao });
+  }
+
+  const addPersonStrategies = {
+    [PersonStatus.FORBIDDEN]: addUnathorizedPerson, 
+    [PersonStatus.ALLOWED]: addAthorizedPerson, 
+    [PersonStatus.GENERATED]: addRegisteredPerson, 
+  }
+
+  const addPerson = async () => {
+    const personStatus = await checkPersonStatus(person.email);
+    const addPersonStrategy = addPersonStrategies[personStatus];
+    await addPersonStrategy();
   };
 
   return (
@@ -106,7 +111,7 @@ const Form = (props: FormProps) => {
       <button
         type="button"
         onClick={addPerson}
-        disabled={!person?.name || !person?.email || !person?.dataEmissao || !isEmailValid}
+        disabled={!person?.name || !person?.email || !person?.dataEmissao}
         className="px-16 text-white bg-primary font-bold py-2 md:text-xl disabled:opacity-75 md:py-4 rounded-lg"
       >
         Clique para Emitir
