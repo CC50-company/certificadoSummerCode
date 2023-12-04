@@ -7,6 +7,12 @@
     },
     {
         "pessoa": {
+            "email": "string"
+        },
+        "status": "ativo"
+    },
+    {
+        "pessoa": {
             "email": "layse.garcia@estudante.ufla.br"
         },
         "status": "ativo"
