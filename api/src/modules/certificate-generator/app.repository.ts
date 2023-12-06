@@ -4,10 +4,8 @@ import { Student } from './entities/Student';
 
 @Injectable()
 export class CertificateGeneratorRepository {
-  // private readonly filePathStudents = '.\\src\\components\\estudantes.json';
-  // private readonly filePathCertificates = '.\\src\\components\\ids.json';
-  private readonly filePathStudents = 'estudantes.json';
-  private readonly filePathCertificates = 'ids.json';
+  private readonly filePathStudents = '.\\src\\components\\estudantes.json';
+  private readonly filePathCertificates = '.\\src\\components\\ids.json';
   
   constructor() {
     fs.exists(this.filePathStudents, (exists) => {

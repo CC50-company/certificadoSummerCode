@@ -1,15 +1,11 @@
 import { defineConfig } from "vite";
-import { run } from 'vite-plugin-run'
 import react from "@vitejs/plugin-react";
+import { bootstrap } from "./api/src/main"
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    run([{
-        name: 'API startup',
-        run: ['ts-node', '.\\api\\src\\main.ts'],
-      }])
-  ],
-  base: "/",
-});
+export default defineConfig(async ({}) => {
+  bootstrap()
+  return {
+    plugins: [react()],
+    base: "/",
+  }
+})

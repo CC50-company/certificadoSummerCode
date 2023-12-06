@@ -6,6 +6,13 @@ import { CertificateGeneratorRepository } from './app.repository';
 @Module({
   imports: [],
   controllers: [CertificateGeneratorController],
-  providers: [CertificateGeneratorService, CertificateGeneratorRepository],
+  providers: [{
+      provide: 'CertificateGeneratorService',
+      useClass: CertificateGeneratorService,
+    }, {
+      provide: 'CertificateGeneratorRepository',
+      useClass: CertificateGeneratorRepository,
+    }
+  ],
 })
 export class CertificateGeneratorModule {}
