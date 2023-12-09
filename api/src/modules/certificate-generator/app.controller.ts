@@ -1,4 +1,4 @@
-import { StreamableFile, Controller, Get, ForbiddenException, Post, Query, Param, Body, NotFoundException, Inject } from '@nestjs/common';
+import { StreamableFile, Controller, Get, ForbiddenException, Post, Query, Param, Body, NotFoundException } from '@nestjs/common';
 import { CertificateGeneratorService } from './app.service';
 import { PersonStatus } from './entities/status.enum';
 import { Person } from './entities/Person';
@@ -7,8 +7,7 @@ import { Student } from './entities/Student';
 @Controller('certificate')
 export class CertificateGeneratorController {
   getCertificateStrategies: object
-  constructor(@Inject("CertificateGeneratorService") private readonly appService: CertificateGeneratorService) {
-    console.log(appService)
+  constructor(private readonly appService: CertificateGeneratorService) {
     this.getCertificateStrategies = {
       [PersonStatus.FORBIDDEN]: async (student: Student) => { throw new ForbiddenException },
       [PersonStatus.ALLOWED]: appService.generateCertificate.bind(appService),

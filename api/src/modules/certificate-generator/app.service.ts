@@ -1,4 +1,4 @@
-import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CertificateGeneratorRepository } from './app.repository';
 import { createCertificate } from './services/GenerateCertificate';
 import { PersonStatus } from './entities/status.enum';
@@ -9,7 +9,7 @@ import {v4 as uuidv4} from 'uuid';
 
 @Injectable()
 export class CertificateGeneratorService {
-  constructor(@Inject("CertificateGeneratorRepository") private readonly appRepository: CertificateGeneratorRepository) {};
+  constructor(private readonly appRepository: CertificateGeneratorRepository) {};
 
   private updateStudent(backupStudent: Student, updatedStudent:  {
     status?: PersonStatus, person?: Person, certificateId?: string

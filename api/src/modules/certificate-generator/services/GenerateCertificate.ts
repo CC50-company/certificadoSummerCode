@@ -1,10 +1,10 @@
-import fontkit from "@pdf-lib/fontkit";
+import * as fontkit from "@pdf-lib/fontkit";
 import { PDFDocument, rgb } from "pdf-lib";
 import * as fs from 'fs';
 import { Student } from "../entities/Student";
 
-const robotoPath = "api/src/modules/certificate-generator/assets/Roboto-Regular.ttf";
-const certificatePath = "api/src/modules/certificate-generator/assets/certificate_template.pdf";
+const robotoPath = "src/modules/certificate-generator/assets/Roboto-Regular.ttf";
+const certificatePath = "src/modules/certificate-generator/assets/certificate_template.pdf";
 const NAME_FONT_SIZE = 36;
 const EMAIL_FONT_SIZE = 18;
 const ID_FONT_SIZE = 18;
