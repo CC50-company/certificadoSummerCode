@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { PersonStatus } from '../../api/src/modules/certificate-generator/entities/status.enum'
 
-const apiUrlBase = 'http://localhost:3000/certificate';
+const apiUrlBase = 'http://127.0.0.1:5001/certificadoscc50/us-central1/api/certificate';
 const apiUrlGenerateCertificate = apiUrlBase;
 const apiUrlCheckStatus = apiUrlBase + '/status';
 const apiUrlGetCertificateIdByEmail = apiUrlBase + "/id";
