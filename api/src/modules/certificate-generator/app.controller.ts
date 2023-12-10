@@ -1,8 +1,9 @@
-import { StreamableFile, Controller, Get, ForbiddenException, Post, Query, Param, Body, NotFoundException } from '@nestjs/common';
+import { StreamableFile, Controller, Get, Delete, Patch, Headers, ForbiddenException, Post, Query, Param, Body, NotFoundException } from '@nestjs/common';
 import { CertificateGeneratorService } from './app.service';
 import { PersonStatus } from './entities/status.enum';
 import { Person } from './entities/Person';
 import { Student } from './entities/Student';
+import { ApiHeader } from '@nestjs/swagger';
 
 @Controller('certificate')
 export class CertificateGeneratorController {
@@ -53,6 +54,41 @@ export class CertificateGeneratorController {
       throw new NotFoundException();
     };
     return await this.getCertiticateByEmail(email);
+  }
+
+
+  checkPassword(password: string) {
+    if (password != "stub"){
+      throw new ForbiddenException();
+    }
+  }
+
+  @Delete(':id')
+  @ApiHeader({name: "password"})
+  async deleteCertificate(@Param('id') id: string, @Headers('password') password: string): Promise<boolean> {
+    this.checkPassword(password);
+    const email = this.appService.getEmailByCertificateId(id);
+    if (!email) {
+      throw new NotFoundException();
+    };
+    return this.appService.deleteCertificate(id, email);
+  }
+
+  @Patch('student')
+  @ApiHeader({name: "password"})
+  async changeStudent(@Body() newStudent: Student, @Headers('password') password: string): Promise<boolean> {
+    this.checkPassword(password);
+    const student = this.appService.getStudent(newStudent.person.email);
+    if (student.status != PersonStatus.GENERATED) {
+      throw new ForbiddenException();
+    };
+    return this.appService.updateStudent(newStudent);
+  }
+  @Get('student')
+  @ApiHeader({name: "password"})
+  async getStudentByEmail(@Query('email') email: string, @Headers('password') password: string): Promise<Student> {
+    this.checkPassword(password);
+    return this.appService.getStudent(email);
   }
 
 }

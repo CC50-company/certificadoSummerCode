@@ -4,8 +4,6 @@ import { Student } from './entities/Student';
 
 @Injectable()
 export class CertificateGeneratorRepository {
-  // private readonly filePathStudents = '.\\src\\components\\estudantes.json';
-  // private readonly filePathCertificates = '.\\src\\components\\ids.json';
   private readonly filePathStudents = 'estudantes.json';
   private readonly filePathCertificates = 'ids.json';
   
@@ -62,5 +60,10 @@ export class CertificateGeneratorRepository {
     let students = this.getStudents();
     students[student.person.email] = student
     return this.setStudents(students);
+  }
+  deleteCertificate(id: string): boolean {
+    let certificates = this.getCertificates();
+    delete certificates[id];
+    return this.setCertificates(certificates);
   }
 }
